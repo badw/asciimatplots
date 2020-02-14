@@ -1,0 +1,52 @@
+#!/bin/bash
+#version 3
+exec 2>/dev/null
+if [ -f OSZICAR ] && [ -f OUTCAR ]; then
+	if grep -q "F" OSZICAR ; then
+		nions=$(grep NIONS OUTCAR | awk '{print $12}')
+		nsw=$(grep F OSZICAR | wc -l)
+		init_e=$(grep "y=" OUTCAR | awk '{print $7}' | head -1)
+			#calculation of total energy
+			grep "y=" OUTCAR | awk '{print ($7 - var)}' var="$init_e" | cat -n > energy_converge.dat
+			#calculation of fmax
+		nions2=$(echo "$nions + 1" | bc)
+			grep "total drift" OUTCAR -B $nions2 | grep -v "total drift" | sed 's/.-//g' | column -t | awk '{print sqrt($4^2+$5^2+$6^2)}' >> temp
+				typeset -i i END
+					let END=$nsw i=1
+						while ((i<=END));do
+						iter=$(echo "$nions * $i" | bc)
+						cat temp | head -$iter | tail -$nions | sort | tail -1 >> fmax.dat
+					let i++
+				done
+			paste energy_converge.dat fmax.dat > plot.dat
+#plotting time!
+echo "*A = Delta(tot energy)"
+echo "#B = fmax"
+gnuplot << EOF
+	
+set term dumb enhanced 60 25;
+
+set autoscale x;
+set xtics nomirror;
+set xlabel "ionic steps";	
+set autoscale y1
+set ylabel "Delta(E)";
+	
+set autoscale y2;
+set y2label "fmax";
+set y2tics  nomirror ;
+
+unset key
+	
+plot \
+"plot.dat" using 1:2 with linespoints axes x1y1, \
+"plot.dat" using 1:3 with linespoints axes x1y2
+
+EOF
+		rm temp energy_converge.dat fmax.dat plot.dat
+	else
+		echo "no ionic steps performed"
+	fi
+else
+	echo "OSZICAR and OUTCAR needed!"
+fi
