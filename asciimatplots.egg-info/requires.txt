@@ -1,0 +1,4 @@
+colorama
+termplotlib
+numpy
+pymatgen

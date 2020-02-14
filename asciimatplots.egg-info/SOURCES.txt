@@ -1,0 +1,7 @@
+setup.py
+asciimatplots.egg-info/PKG-INFO
+asciimatplots.egg-info/SOURCES.txt
+asciimatplots.egg-info/dependency_links.txt
+asciimatplots.egg-info/entry_points.txt
+asciimatplots.egg-info/requires.txt
+asciimatplots.egg-info/top_level.txt

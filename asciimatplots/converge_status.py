@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 import warnings
 from pymatgen.io.vasp import Vasprun as pymvasprun
 import numpy as np 

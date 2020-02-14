@@ -1,0 +1,3 @@
+[console_scripts]
+ascii-converge = asciimatplots.converge_status:main
+
