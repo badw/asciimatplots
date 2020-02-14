@@ -24,3 +24,13 @@ Requirements:
 
 `vasprun.xml`
 
+#### ascii-nebplot
+
+Description:
+
+plots both the energy barrier and the image force for each image
+
+Requirements:
+
+a converged NEB run
+
