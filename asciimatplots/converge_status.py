@@ -31,7 +31,7 @@ def main():
             x = [x for x in range(1,len(tot)+1)]
             
             fig1 = tp.figure()
-            fig1.plot(x,tot,width=60,height=20,label='Fmax',xlabel='ionic step')
+            fig1.plot(x,tot,width=30,height=20,label='Fmax',xlabel='ionic step')
             
             figure1 = []
             for string in fig1.get_string():
@@ -48,7 +48,7 @@ def main():
             x = [x for x in range(1,len(energies)+1)]
 
             fig2 = tp.figure()
-            fig2.plot(x,energies,width=60,height=20,label='Etot',xlabel='ionic step')
+            fig2.plot(x,energies,width=40,height=20,label='Etot',xlabel='ionic step')
             
             figure2 = []
             for string in fig2.get_string():
