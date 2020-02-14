@@ -27,7 +27,7 @@ setup(
         ],
     keywords='chemistry pymatgen physics dft vasp',
     packages=find_packages(),
-    install_requires=['colorama','termplotlib', 'numpy', 'pymatgen'],
+    install_requires=['colorama','termplotlib', 'numpy', 'pymatgen','argparse'],
     entry_points={'console_scripts': [
                       'ascii-converge = asciimatplots.converge_status:main']},
     )
