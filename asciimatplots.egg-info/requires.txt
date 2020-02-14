@@ -1,4 +1,0 @@
-colorama
-termplotlib
-numpy
-pymatgen
