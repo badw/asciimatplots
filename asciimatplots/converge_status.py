@@ -1,5 +1,5 @@
 import warnings
-from pymatgen.io.vasp import Vasprun as pymvasprun
+from pymatgen.io.vasp import Vasprun
 import numpy as np 
 import termplotlib as tp
 from colorama import Fore
@@ -17,7 +17,7 @@ def main():
     args = parser.parse_args()
     
     if os.path.exists('./vasprun.xml'):
-        vasprun = pymvasprun('./vasprun.xml')
+        vasprun = Vasprun('./vasprun.xml')
 
         def forceplot():
             tot = []
