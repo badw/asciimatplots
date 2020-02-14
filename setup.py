@@ -29,5 +29,6 @@ setup(
     packages=find_packages(),
     install_requires=['colorama','termplotlib', 'numpy', 'pymatgen','argparse'],
     entry_points={'console_scripts': [
-                      'ascii-converge = asciimatplots.converge_status:main']},
+                      'ascii-converge = asciimatplots.converge_status:main',
+                      'ascii-nebplot = asciimatplots.neb_barrier:main']},
     )
