@@ -10,9 +10,9 @@ warnings.filterwarnings("ignore")
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('-f', '--fmax', default=False,
+    parser.add_argument('-f', '--fmax', default=False, action='store_true',
                         help='generate a fmax plot only (default=false)')
-    parser.add_argument('-e', '--energy', default=False,
+    parser.add_argument('-e', '--energy', default=False, action='store_true',
                         help='generate a total energy plot only (default=false)')
     args = parser.parse_args()
     
