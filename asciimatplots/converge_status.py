@@ -1,10 +1,11 @@
 import warnings
-from pymatgen.io.vasp import Vasprun
 import numpy as np 
 import termplotlib as tp
 from colorama import Fore
 import argparse
 import os
+import re
+import sys
 
 warnings.filterwarnings("ignore")
 
@@ -16,22 +17,50 @@ def main():
                         help='generate a total energy plot only (default=false)')
     args = parser.parse_args()
     
-    if os.path.exists('./vasprun.xml'):
-        vasprun = Vasprun('./vasprun.xml')
-
+    if os.path.exists('./OUTCAR'):
+        
         def forceplot():
-            tot = []
-            for i in range(0,len(vasprun.as_dict()['output']['ionic_steps'])):
-                x = [x2[0] for x2 in vasprun.as_dict()['output']['ionic_steps'][i]['forces']]
-                y = [y2[1] for y2 in vasprun.as_dict()['output']['ionic_steps'][i]['forces']]
-                z = [z2[2] for z2 in vasprun.as_dict()['output']['ionic_steps'][i]['forces']]
-                total = np.amax([np.sqrt(x[i]**2 + y[i]**2 + z[i]**2) for i in range(0,len(x))])
-                tot.append(total)
-            
-            x = [x for x in range(1,len(tot)+1)]
+                
+            driftlines = []
+            sigma = []
+            with open("OUTCAR") as outcar:
+                for i,line in enumerate(outcar):
+                    if 'NIONS' in line:
+                        nion = line.split()[-1]
+                    if 'total drift' in line:
+                        driftlines.append(i)
+                    if 'y=' in line:
+                        sigma.append(line.split()[-1])
+
+                outcar = open('OUTCAR')
+                lines = outcar.readlines()
+                
+                forces = [" ".join(lines[int(x-(int(nion)+1)):x-1]).split() for x in driftlines]
+                 
+                newforces = [np.reshape(x, (int(nion), 6)) for x in forces]
+
+                newnewforces = []
+                for step in range(len(forces)):
+                    newnewforces.append([])
+                    for atom in range(int(nion)):        
+                        newnewforces[step].append([float(newforces[step][atom][3]),float(newforces[step][atom][4]),float(newforces[step][atom][5])])
+                
+                fmaxes = []
+                for i,x in enumerate(newnewforces):
+                    fmaxes.append([])
+                    for y in x:
+                        fmaxes[i].append(np.linalg.norm(y))
+                
+                fmax = [np.amax(x) for x in fmaxes]
+
+                x = [x for x in range(1,len(fmax)+1)]
             
             fig1 = tp.figure()
-            fig1.plot(x,tot,width=30,height=20,label='Fmax',xlabel='ionic step')
+            fig1.plot(x,fmax,
+                    width=40,
+                    height=20,
+                    label='Fmax',
+                    xlabel='ionic step')
             
             figure1 = []
             for string in fig1.get_string():
@@ -43,12 +72,17 @@ def main():
             print(''.join(figure1))
         
         def energyplot():
+            sigma = []
+            with open("OUTCAR") as outcar:
+                for line in outcar:
+                    if 'y=' in line:
+                        sigma.append(float(line.split()[-1]))
             
-            energies = [ e['e_wo_entrp'] for e in vasprun.as_dict()['output']['ionic_steps']]
-            x = [x for x in range(1,len(energies)+1)]
+
+            x = [x for x in range(1,len(sigma)+1)]
 
             fig2 = tp.figure()
-            fig2.plot(x,energies,width=40,height=20,label='Etot',xlabel='ionic step')
+            fig2.plot(x,sigma,width=40,height=20,label='Etot',xlabel='ionic step')
             
             figure2 = []
             for string in fig2.get_string():
@@ -67,7 +101,7 @@ def main():
             forceplot()
             energyplot()
     else:
-        print('vasprun.xml not found')
+        print('OUTCAR not found')
 
 
 if __name__ == "__main__":
