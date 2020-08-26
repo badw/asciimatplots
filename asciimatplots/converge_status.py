@@ -15,6 +15,8 @@ def main():
                         help='generate a both fmax and energy plots (default=false)')
     parser.add_argument('-e', '--energy', default=False, action='store_true',
                         help='generate a total energy plot only (default=false)')
+    parser.add_argument('-s', '--steprange', metavar='step', nargs=2, type=int, default=[1,-1],
+                        help='1-indexed min and max steps to show (default:[1,-1])')
     args = parser.parse_args()
     
     if os.path.exists('./OUTCAR'):
@@ -53,10 +55,13 @@ def main():
                 
                 fmax = [np.amax(x) for x in fmaxes]
 
-                x = [x for x in range(1,len(fmax)+1)]
+                numsteps = len(fmax)
+                x = [x for x in range(1,numsteps+1)]
+                minstep = 0 if args.steprange[0] <= 1 else args.steprange[0]-1
+                maxstep = -1 if args.steprange[1] >= x[-1] or args.steprange[1] == -1 else args.steprange[1]-1
             
             fig1 = tp.figure()
-            fig1.plot(x,fmax,
+            fig1.plot(x[minstep:maxstep],fmax[minstep:maxstep],
                     width=40,
                     height=20,
                     label='Fmax',
@@ -79,10 +84,17 @@ def main():
                         sigma.append(float(line.split()[-1]))
             
 
-            x = [x for x in range(1,len(sigma)+1)]
+            numsteps = len(sigma)
+            x = [x for x in range(1,numsteps+1)]
+            minstep = 0 if args.steprange[0] <= 1 else args.steprange[0]-1
+            maxstep = -1 if args.steprange[1] > x[-1] or args.steprange[1] == -1 else args.steprange[1]-1
 
             fig2 = tp.figure()
-            fig2.plot(x,sigma,width=40,height=20,label='Etot',xlabel='ionic step')
+            fig2.plot(x[minstep:maxstep],sigma[minstep:maxstep],
+                    width=40,
+                    height=20,
+                    label='Etot',
+                    xlabel='ionic step')
             
             figure2 = []
             for string in fig2.get_string():
